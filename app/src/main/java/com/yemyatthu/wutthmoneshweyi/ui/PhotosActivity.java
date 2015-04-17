@@ -125,6 +125,7 @@ public class PhotosActivity extends ActionBarActivity {
     super.onPause();
     if(dialog != null && dialog.isShowing()) {
       dialog.dismiss();
+      mStateHolder.mIsShowingDialog=true;
     }
   }
 
