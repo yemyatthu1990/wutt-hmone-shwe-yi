@@ -1,6 +1,7 @@
 package com.yemyatthu.wutthmoneshweyi.ui;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -32,6 +33,7 @@ import java.util.List;
  * Created by yemyatthu on 4/15/15.
  */
 public class PhotosActivity extends ActionBarActivity {
+
   @InjectView(R.id.photo_recycler_view) RecyclerView mPhotoRecyclerView;
   @InjectView(R.id.progress_bar) ProgressBar mProgressBar;
   private RecyclerView.LayoutManager mLayoutManager;
@@ -39,11 +41,20 @@ public class PhotosActivity extends ActionBarActivity {
   private List<String> photoUrls = new ArrayList<>();
   private ActionBar mActionBar;
   private int mImagePosition;
+  private StateHolder mStateHolder;
+  private Dialog dialog;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_photos);
     ButterKnife.inject(this);
+    Object retained = getLastCustomNonConfigurationInstance();
+    if (retained != null && retained instanceof StateHolder) {
+      mStateHolder = (StateHolder) retained;
+    } else {
+      mStateHolder = new StateHolder();
+    }
+
     mActionBar = getSupportActionBar();
     mActionBar.setDisplayHomeAsUpEnabled(true);
     mLayoutManager = new GridLayoutManager(PhotosActivity.this, 2);
@@ -58,45 +69,8 @@ public class PhotosActivity extends ActionBarActivity {
           return;
         }
         mImagePosition = position;
-        final Dialog dialog = new Dialog(PhotosActivity.this, R.style.ImageDialogAnimation);
-        View dialogView = getLayoutInflater().inflate(R.layout.image_dialog, null);
-        final ImageView imageView = (ImageView) dialogView.findViewById(R.id.dialog_image);
-        dialog.setContentView(dialogView);
-        dialog.show();
-        ((WHSY)getApplication()).sendTracker("Detail Photo");
-        Glide.with(PhotosActivity.this)
-            .load(photoUrls.get(mImagePosition))
-            .crossFade()
-            .into(imageView);
-        imageView.setOnTouchListener(new OnSwipeListener(PhotosActivity.this) {
-          @Override public void onSwipeRight() {
-            super.onSwipeLeft();
-            if(mImagePosition!=0){
-              mImagePosition--;
-            Glide.with(PhotosActivity.this)
-                .load(photoUrls.get(mImagePosition))
-                .into(imageView);
-            }
-            ((WHSY)getApplication()).sendTracker("Swipe Right");
-          }
-
-          @Override public void onSwipeLeft() {
-            super.onSwipeRight();
-            if(mImagePosition<photoUrls.size()){
-              mImagePosition++;
-              Glide.with(PhotosActivity.this)
-                  .load(photoUrls.get(mImagePosition))
-                  .into(imageView);
-            }
-            ((WHSY)getApplication()).sendTracker("Swipe Left");
-          }
-
-          @Override public void onSwipeTop() {
-            super.onSwipeTop();
-            dialog.dismiss();
-            ((WHSY)getApplication()).sendTracker("Swipe Top");
-          }
-        });
+        mStateHolder.mLastPosition = mImagePosition;
+        showDialog();
       }
     });
     //
@@ -130,6 +104,7 @@ public class PhotosActivity extends ActionBarActivity {
           return;
         }
         photoUrls = (List<String>) dataSnapshot.child("phtotos").getValue();
+        mStateHolder.mPhotoUrls = photoUrls;
         Collections.reverse(photoUrls);
         mPhotoRecyclerAdapter.setItems(photoUrls);
         mProgressBar.setVisibility(View.INVISIBLE);
@@ -141,6 +116,27 @@ public class PhotosActivity extends ActionBarActivity {
     });
   }
 
+  @Override public Object onRetainCustomNonConfigurationInstance() {
+    return mStateHolder;
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    if(dialog != null && dialog.isShowing()) {
+      dialog.dismiss();
+    }
+  }
+
+  @Override
+  public void onResume() {
+    if(mStateHolder.mIsShowingDialog) {
+      mImagePosition = mStateHolder.mLastPosition;
+      photoUrls = mStateHolder.mPhotoUrls;
+      showDialog();
+    }
+    super.onResume();
+  }
   @Override public boolean onOptionsItemSelected(MenuItem item) {
 
     switch (item.getItemId()){
@@ -155,5 +151,59 @@ public class PhotosActivity extends ActionBarActivity {
     ConnectivityManager connectivityManager =
         (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
     return (connectivityManager.getActiveNetworkInfo()!=null&&connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting());
+  }
+  private static class StateHolder {
+    boolean mIsShowingDialog;
+    int mLastPosition;
+    List<String> mPhotoUrls;
+    public StateHolder() {}
+  }
+  private void showDialog(){
+    dialog = new Dialog(PhotosActivity.this, R.style.ImageDialogAnimation);
+    View dialogView = getLayoutInflater().inflate(R.layout.image_dialog, null);
+    final ImageView imageView = (ImageView) dialogView.findViewById(R.id.dialog_image);
+    dialog.setContentView(dialogView);
+    dialog.show();
+    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      @Override public void onDismiss(DialogInterface dialogInterface) {
+        mStateHolder.mIsShowingDialog=false;
+      }
+    });
+    mStateHolder.mIsShowingDialog = true;
+    ((WHSY)getApplication()).sendTracker("Detail Photo");
+    Glide.with(PhotosActivity.this)
+        .load(photoUrls.get(mImagePosition))
+        .crossFade()
+        .into(imageView);
+    imageView.setOnTouchListener(new OnSwipeListener(PhotosActivity.this) {
+      @Override public void onSwipeRight() {
+        super.onSwipeLeft();
+        if(mImagePosition!=0){
+          mImagePosition--;
+          Glide.with(PhotosActivity.this)
+              .load(photoUrls.get(mImagePosition))
+              .into(imageView);
+        }
+        ((WHSY)getApplication()).sendTracker("Swipe Right");
+      }
+
+      @Override public void onSwipeLeft() {
+        super.onSwipeRight();
+        if(mImagePosition<photoUrls.size()){
+          mImagePosition++;
+          Glide.with(PhotosActivity.this)
+              .load(photoUrls.get(mImagePosition))
+              .into(imageView);
+        }
+        ((WHSY)getApplication()).sendTracker("Swipe Left");
+      }
+
+      @Override public void onSwipeTop() {
+        super.onSwipeTop();
+        dialog.dismiss();
+        mStateHolder.mIsShowingDialog=false;
+        ((WHSY)getApplication()).sendTracker("Swipe Top");
+      }
+    });
   }
 }
