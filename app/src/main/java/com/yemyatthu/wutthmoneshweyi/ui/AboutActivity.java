@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.yemyatthu.wutthmoneshweyi.BuildConfig;
 import com.yemyatthu.wutthmoneshweyi.R;
 
 /**
@@ -17,6 +18,7 @@ import com.yemyatthu.wutthmoneshweyi.R;
 public class AboutActivity extends ActionBarActivity{
   @InjectView(R.id.about_text) TextView mAboutText;
   @InjectView(R.id.about_web) WebView mAboutWeb;
+  @InjectView(R.id.version_text) TextView mVersionText;
   private ActionBar mActionBar;
   private boolean expand = false;
   private String licenceText;
@@ -34,6 +36,7 @@ public class AboutActivity extends ActionBarActivity{
 
     mAboutText.setText(Html.fromHtml(aboutText));
     mAboutWeb.loadUrl("file:///android_asset/about.html");
+    mVersionText.setText("Version: "+ BuildConfig.VERSION_NAME);
   }
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
