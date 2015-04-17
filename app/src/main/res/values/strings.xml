@@ -1,0 +1,29 @@
+<resources>
+  <string name="app_name">Wutt Hmone Shwe Yi</string>
+  <string name="photos">Photos</string>
+  <string name="biography">Biography</string>
+  <string name="follow">Follow</string>
+  <string name="about">About</string>
+  <string name="native_name_title">Native Name:</string>
+  <string name="native_name">ဝတ်မှုန်ရွှေရည်</string>
+  <string name="born_title">Born:</string>
+  <string name="born">10 August 1988 (age 26) \nYangon, Myanmar</string>
+  <string name="height_title">Height:</string>
+  <string name="height">5 ft 4 in (1.63 m)</string>
+  <string name="weight_title">Weight:</string>
+  <string name="weight">101 lb (46 kg)</string>
+  <string name="career">Career</string>
+  <string name="career_content">\t\t\t\tWutt Hmone Shwe Yi started her acting with advertisements in
+    2009.She has made over 40 films.In 2013, Myanmar Times named her as one of the 50
+    Outstanding Myanmar Women.She also participated in Myanmar Famous Actor Pyay Ti
+    Oo\'s Pyay Ti Oo Foundation Fund Raising Concert for students on December 4, 2011 and donated
+    all her artist fees for the foundation.
+  </string>
+  <string name="personal">Personal</string>
+  <string name="personal_content">\t\t\t\tHer relationship with singer/songwriter/actor Sai Sai Kham
+    Leng was one of the most famous scandals dealing with celebrities. But they never made it to a
+    public relationship and they broke up after some years.
+  </string>
+  <string name="awards">Awards</string>
+  <string name="awards_content">\t\t\t\tMyanmar\'s Best Lead Actress Academy Award (2013)</string>
+</resources>
