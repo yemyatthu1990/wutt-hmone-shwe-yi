@@ -123,15 +123,14 @@ public class PhotosActivity extends ActionBarActivity {
   @Override
   public void onPause() {
     super.onPause();
-    if(dialog != null && dialog.isShowing()) {
+    if (dialog != null && dialog.isShowing()) {
       dialog.dismiss();
-      mStateHolder.mIsShowingDialog=true;
+      mStateHolder.mIsShowingDialog = true;
     }
   }
 
-  @Override
-  public void onResume() {
-    if(mStateHolder.mIsShowingDialog) {
+  @Override public void onResume() {
+    if (mStateHolder.mIsShowingDialog) {
       mImagePosition = mStateHolder.mLastPosition;
       photoUrls = mStateHolder.mPhotoUrls;
       showDialog();
@@ -153,12 +152,7 @@ public class PhotosActivity extends ActionBarActivity {
         (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
     return (connectivityManager.getActiveNetworkInfo()!=null&&connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting());
   }
-  private static class StateHolder {
-    boolean mIsShowingDialog;
-    int mLastPosition;
-    List<String> mPhotoUrls;
-    public StateHolder() {}
-  }
+
   private void showDialog(){
     dialog = new Dialog(PhotosActivity.this, R.style.ImageDialogAnimation);
     View dialogView = getLayoutInflater().inflate(R.layout.image_dialog, null);
@@ -206,5 +200,12 @@ public class PhotosActivity extends ActionBarActivity {
         ((WHSY)getApplication()).sendTracker("Swipe Top");
       }
     });
+  }
+
+  private static class StateHolder {
+    boolean mIsShowingDialog;
+    int mLastPosition;
+    List<String> mPhotoUrls;
+    public StateHolder() {}
   }
 }

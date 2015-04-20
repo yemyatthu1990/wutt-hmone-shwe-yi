@@ -20,6 +20,14 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
         return gestureDetector.onTouchEvent(event);
     }
 
+    public void onSwipeLeft() {}
+
+    public void onSwipeRight() {}
+
+    public void onSwipeTop() {}
+
+    public void onSwipeBottom() {}
+
     private final class OnSwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private final int minSwipeDelta;
@@ -79,12 +87,4 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
             return result;
         }
     }
-
-    public void onSwipeLeft() {}
-
-    public void onSwipeRight() {}
-
-    public void onSwipeTop() {}
-
-    public void onSwipeBottom() {}
 }
