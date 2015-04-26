@@ -32,11 +32,13 @@ public class DialogAdapter extends PagerAdapter {
 
   @Override public Object instantiateItem(ViewGroup container, int position) {
     ImageView imageView = new ImageView(container.getContext());
-    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT);
+
+
     imageView.setScaleType(ImageView.ScaleType.CENTER);
-    imageView.setLayoutParams(layoutParams);
+    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT);
     mAttacher = new PhotoViewAttacher(imageView);
+    imageView.setLayoutParams(layoutParams);
     container.addView(imageView);
     Glide.with(container.getContext())
         .load(mPhotoUrls.get(position))

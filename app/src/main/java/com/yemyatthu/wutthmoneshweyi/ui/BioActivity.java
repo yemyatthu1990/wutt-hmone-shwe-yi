@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.ButterKnife;
@@ -18,7 +17,7 @@ import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.yemyatthu.wutthmoneshweyi.R;
 import com.yemyatthu.wutthmoneshweyi.WHSY;
-import com.yemyatthu.wutthmoneshweyi.util.OnSwipeListener;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by yemyatthu on 4/16/15.
@@ -28,6 +27,7 @@ public class BioActivity extends ActionBarActivity {
   @InjectView(R.id.profile_image) ImageView mProfileImage;
   @InjectView(R.id.wiki_card) CardView mWikiCard;
   private ActionBar mActionBar;
+  private PhotoViewAttacher mAttacher;
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bio);
@@ -46,22 +46,16 @@ public class BioActivity extends ActionBarActivity {
   }
   @OnClick(R.id.profile_image)
   public  void onClickProfile(){
-    final Dialog dialog = new Dialog(BioActivity.this, R.style.ImageDialogAnimation);
-    View dialogView = getLayoutInflater().inflate(R.layout.image_dialog, null);
-    final ImageView imageView = (ImageView) dialogView.findViewById(R.id.dialog_image);
-    dialog.setContentView(dialogView);
+    Dialog dialog = new Dialog(BioActivity.this, R.style.ImageDialogAnimation);
+    ImageView imageView = (ImageView) getLayoutInflater().inflate(R.layout.dialog_image, null);
+    dialog.setContentView(imageView);
+
     dialog.show();
     Glide.with(BioActivity.this)
         .load(R.drawable.wutt_hmone_shwe_yi)
-        .crossFade()
-        .into(imageView);
+        .crossFade().into(imageView);
 
-    imageView.setOnTouchListener(new OnSwipeListener(BioActivity.this) {
-      @Override public void onSwipeTop() {
-        super.onSwipeTop();
-        dialog.dismiss();
-      }
-    });
+    mAttacher = new PhotoViewAttacher(imageView);
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
