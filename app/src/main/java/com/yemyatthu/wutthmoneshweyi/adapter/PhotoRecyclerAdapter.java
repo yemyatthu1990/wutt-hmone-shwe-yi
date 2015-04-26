@@ -36,7 +36,7 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<PhotoRecyclerAdap
     Glide.with(holder.mImageView.getContext())
         .load(mUrls.get(position))
         .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .centerCrop()
+        .placeholder(R.drawable.placeholder)
         .crossFade()
         .into(holder.mImageView);
   }
