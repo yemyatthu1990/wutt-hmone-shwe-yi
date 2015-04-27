@@ -20,6 +20,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.yemyatthu.wutthmoneshweyi.R;
 import com.yemyatthu.wutthmoneshweyi.WHSY;
 import com.yemyatthu.wutthmoneshweyi.adapter.DialogAdapter;
@@ -157,8 +158,9 @@ public class PhotosActivity extends ActionBarActivity {
   private void showDialog() {
     dialog = new Dialog(PhotosActivity.this, R.style.ImageDialogAnimation);
     View dialogView = getLayoutInflater().inflate(R.layout.image_dialog, null);
-    ViewPager viewPager = (ViewPager) dialogView.findViewById(R.id.dialog_pager);
-    DialogAdapter dialogAdapter = new DialogAdapter();
+    final ViewPager viewPager = (ViewPager) dialogView.findViewById(R.id.dialog_pager);
+    final FloatingActionButton fab = (FloatingActionButton) dialogView.findViewById(R.id.fab);
+    DialogAdapter dialogAdapter = new DialogAdapter(fab);
     dialogAdapter.replaceAll(photoUrls);
     viewPager.setAdapter(dialogAdapter);
     viewPager.setCurrentItem(mImagePosition);
@@ -171,6 +173,8 @@ public class PhotosActivity extends ActionBarActivity {
     });
     mStateHolder.mIsShowingDialog = true;
     ((WHSY) getApplication()).sendTracker("Detail Photo");
+
+
   }
 
 
@@ -212,4 +216,5 @@ public class PhotosActivity extends ActionBarActivity {
     List<String> mPhotoUrls;
     public StateHolder() {}
   }
+
 }
