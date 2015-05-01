@@ -36,5 +36,6 @@ dependencies {
   compile 'com.github.bumptech.glide:glide:3.5.2'
   compile 'com.google.android.gms:play-services:7.0.0'
   compile 'com.getbase:floatingactionbutton:1.9.0'
+  compile 'com.google.apis:google-api-services-youtube:v3-rev136-1.20.0'
   compile project(':photoview')
 }

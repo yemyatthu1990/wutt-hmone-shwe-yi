@@ -25,6 +25,7 @@ import com.yemyatthu.wutthmoneshweyi.R;
 import com.yemyatthu.wutthmoneshweyi.WHSY;
 import com.yemyatthu.wutthmoneshweyi.adapter.DialogAdapter;
 import com.yemyatthu.wutthmoneshweyi.adapter.PhotoRecyclerAdapter;
+import com.yemyatthu.wutthmoneshweyi.util.TinyDB;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +38,7 @@ public class PhotosActivity extends ActionBarActivity {
 
   @InjectView(R.id.photo_recycler_view) RecyclerView mPhotoRecyclerView;
   @InjectView(R.id.progress_bar) ProgressBar mProgressBar;
+  private static final String URL_CONSTANT = "url_constant";
   private RecyclerView.LayoutManager mLayoutManager;
   private PhotoRecyclerAdapter mPhotoRecyclerAdapter;
   private List<String> photoUrls = new ArrayList<>();
@@ -45,11 +47,13 @@ public class PhotosActivity extends ActionBarActivity {
   private StateHolder mStateHolder;
   private Dialog dialog;
   private PhotoViewAttacher mAttacher;
+  private TinyDB mTinyDB;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_photos);
     ButterKnife.inject(this);
+    mTinyDB = new TinyDB(getApplicationContext());
     Object retained = getLastCustomNonConfigurationInstance();
     if (retained != null && retained instanceof StateHolder) {
       mStateHolder = (StateHolder) retained;
@@ -93,6 +97,12 @@ public class PhotosActivity extends ActionBarActivity {
     //    }
     //  }
     //});
+    if(mTinyDB.getListString(URL_CONSTANT)!=null){
+      photoUrls = mTinyDB.getListString(URL_CONSTANT);
+      mStateHolder.mPhotoUrls = photoUrls;
+      mPhotoRecyclerAdapter.setItems(photoUrls);
+      mProgressBar.setVisibility(View.GONE);
+    }
     if(!isConnected()){
       Toast.makeText(this,"No internet connection.",Toast.LENGTH_LONG).show();
     }
@@ -108,8 +118,9 @@ public class PhotosActivity extends ActionBarActivity {
         photoUrls = (List<String>) dataSnapshot.child("phtotos").getValue();
         mStateHolder.mPhotoUrls = photoUrls;
         Collections.reverse(photoUrls);
+        mTinyDB.putListString(URL_CONSTANT,new ArrayList<String>(photoUrls));
         mPhotoRecyclerAdapter.setItems(photoUrls);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.GONE);
       }
 
       @Override public void onCancelled(FirebaseError firebaseError) {
@@ -176,39 +187,6 @@ public class PhotosActivity extends ActionBarActivity {
 
 
   }
-
-
-  //  imageView.setOnTouchListener(new OnSwipeListener(PhotosActivity.this) {
-  //    @Override public void onSwipeRight() {
-  //      super.onSwipeLeft();
-  //      if(mImagePosition!=0){
-  //        mImagePosition--;
-  //        Glide.with(PhotosActivity.this)
-  //            .load(photoUrls.get(mImagePosition))
-  //            .into(imageView);
-  //      }
-  //      ((WHSY)getApplication()).sendTracker("Swipe Right");
-  //    }
-  //
-  //    @Override public void onSwipeLeft() {
-  //      super.onSwipeRight();
-  //      if(mImagePosition<photoUrls.size()){
-  //        mImagePosition++;
-  //        Glide.with(PhotosActivity.this)
-  //            .load(photoUrls.get(mImagePosition))
-  //            .into(imageView);
-  //      }
-  //      ((WHSY)getApplication()).sendTracker("Swipe Left");
-  //    }
-  //
-  //    @Override public void onSwipeTop() {
-  //      super.onSwipeTop();
-  //      dialog.dismiss();
-  //      mStateHolder.mIsShowingDialog=false;
-  //      ((WHSY)getApplication()).sendTracker("Swipe Top");
-  //    }
-  //  });
-  //}
 
   private static class StateHolder {
     boolean mIsShowingDialog;
