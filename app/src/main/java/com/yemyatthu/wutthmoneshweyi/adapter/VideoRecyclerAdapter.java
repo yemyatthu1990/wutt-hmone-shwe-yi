@@ -26,9 +26,17 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
   public VideoRecyclerAdapter(){
     mSearchListResponses = new ArrayList<>();
   }
+  public void addAll(List<SearchResult> searchListResponses){
+    mSearchListResponses = searchListResponses;
+    notifyDataSetChanged();
+  }
   public void appendAll(List<SearchResult> responses){
     mSearchListResponses.addAll(responses);
     notifyDataSetChanged();
+  }
+
+  public List<SearchResult> getAll(){
+    return mSearchListResponses;
   }
   public interface ClickListener {
     public void onItemClick(View view,int position);
@@ -52,15 +60,19 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
   @Override public void onBindViewHolder(RecyclerView.ViewHolder recyclerHolder, int i) {
     if(recyclerHolder instanceof RecyclerHolder){
-      TextView titleTv = ((RecyclerHolder)recyclerHolder).mTitle;
+      if(mSearchListResponses.size()==0){
+        return;
+      }else {
+        TextView titleTv = ((RecyclerHolder) recyclerHolder).mTitle;
 
-      ImageView mThumbnailTv = ((RecyclerHolder)recyclerHolder).mImageView;
-      SearchResult searchResult = mSearchListResponses.get(i);
-      if (searchResult.getId().getKind().equals("youtube#video")) {
-        titleTv.setText(searchResult.getSnippet().getTitle());
-        Glide.with(mContext)
-            .load(searchResult.getSnippet().getThumbnails().getMedium().getUrl())
-            .into(mThumbnailTv);
+        ImageView mThumbnailTv = ((RecyclerHolder) recyclerHolder).mImageView;
+        SearchResult searchResult = mSearchListResponses.get(i);
+        if (searchResult.getId().getKind().equals("youtube#video")) {
+          titleTv.setText(searchResult.getSnippet().getTitle());
+          Glide.with(mContext)
+              .load(searchResult.getSnippet().getThumbnails().getMedium().getUrl())
+              .into(mThumbnailTv);
+        }
       }
     }else{
       if(mSearchListResponses.size()==0){

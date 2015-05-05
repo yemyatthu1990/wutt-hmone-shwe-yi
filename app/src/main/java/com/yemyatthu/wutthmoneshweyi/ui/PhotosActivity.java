@@ -97,7 +97,7 @@ public class PhotosActivity extends AppCompatActivity {
     //    }
     //  }
     //});
-    if(mTinyDB.getListString(URL_CONSTANT)!=null){
+    if(mTinyDB.getListString(URL_CONSTANT)!=null && mTinyDB.getListString(URL_CONSTANT).size()>0){
       photoUrls = mTinyDB.getListString(URL_CONSTANT);
       mStateHolder.mPhotoUrls = photoUrls;
       mPhotoRecyclerAdapter.setItems(photoUrls);

@@ -42,4 +42,5 @@ dependencies {
   compile 'com.google.apis:google-api-services-youtube:v3-rev136-1.20.0'
   compile project(':photoview')
   compile files('libs/YouTubeAndroidPlayerApi.jar')
+  compile 'com.google.code.gson:gson:2.3.1'
 }

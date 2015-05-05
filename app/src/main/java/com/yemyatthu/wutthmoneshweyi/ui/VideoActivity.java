@@ -3,6 +3,7 @@ package com.yemyatthu.wutthmoneshweyi.ui;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,7 +28,9 @@ import com.yemyatthu.wutthmoneshweyi.BuildConfig;
 import com.yemyatthu.wutthmoneshweyi.R;
 import com.yemyatthu.wutthmoneshweyi.adapter.VideoRecyclerAdapter;
 import com.yemyatthu.wutthmoneshweyi.util.EndlessRecyclerOnScrollListener;
+import com.yemyatthu.wutthmoneshweyi.util.JsonService;
 import com.yemyatthu.wutthmoneshweyi.util.NetUtils;
+import com.yemyatthu.wutthmoneshweyi.util.TinyDB;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +42,7 @@ public class VideoActivity extends AppCompatActivity {
 
   @InjectView(R.id.video_recycler_view) RecyclerView mVideoRecyclerView;
   @InjectView(R.id.progress_bar) ProgressBar mProgressBar;
+  private static final String CACHE = "vd_caches";
   private ActionBar mActionBar;
   private YouTube mYouTube;
   private GridLayoutManager mLayoutManager;
@@ -46,13 +50,16 @@ public class VideoActivity extends AppCompatActivity {
   private YouTube.Search.List search;
   private List<SearchResult> listResponses;
   private SearchListResponse mSearchListResponse;
-
+  private boolean firstTimeLoad;
+  private TinyDB mTinyDB;
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_video);
     ButterKnife.inject(this);
     mActionBar = getSupportActionBar();
     mActionBar.setDisplayHomeAsUpEnabled(true);
+    firstTimeLoad = true;
+    mTinyDB = new TinyDB(getApplicationContext());
     mLayoutManager = new GridLayoutManager(VideoActivity.this, 2);
 
     mVideoRecyclerView.setLayoutManager(mLayoutManager);
@@ -60,6 +67,9 @@ public class VideoActivity extends AppCompatActivity {
     mVideoRecyclerView.setHasFixedSize(true);
     mVideoRecyclerAdapter = new VideoRecyclerAdapter();
     mVideoRecyclerView.setAdapter(mVideoRecyclerAdapter);
+    if(mTinyDB.getString(CACHE)!=null && mTinyDB.getString(CACHE).length()>0){
+    new ReadCacheAsync().execute();
+    }
     mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override
       public int getSpanSize(int position) {
@@ -129,14 +139,20 @@ public class VideoActivity extends AppCompatActivity {
         if(mProgressBar.isShown()){
           mProgressBar.setVisibility(View.GONE);
         }
-        ((VideoRecyclerAdapter) mVideoRecyclerView.getAdapter()).appendAll(listResponses);
-        mVideoRecyclerAdapter.SetOnItemClickListener(new VideoRecyclerAdapter.ClickListener() {
-          @Override public void onItemClick(View view, int position) {
-            Intent intent = YouTubeStandalonePlayer.createVideoIntent(VideoActivity.this,
-                BuildConfig.YOUTUBE_API_KEY, listResponses.get(position).getId().getVideoId());
-            startActivity(intent);
-          }
-        });
+        final VideoRecyclerAdapter currentAdapter = ((VideoRecyclerAdapter) mVideoRecyclerView.getAdapter());
+        if(firstTimeLoad){
+          currentAdapter.addAll(listResponses);
+          new Handler().post(new Runnable() {
+            @Override public void run() {
+              String saveResults = JsonService.convertToJson(listResponses);
+              mTinyDB.putString(CACHE,saveResults);
+            }
+          });
+          firstTimeLoad = false;
+        }else{
+          currentAdapter.appendAll(listResponses);
+        }
+        setOnItemClickOnAdapter();
       }
     }
   }
@@ -176,6 +192,31 @@ public class VideoActivity extends AppCompatActivity {
         return true;
       default:
         return super.onOptionsItemSelected(item);
+    }
+  }
+
+  private void setOnItemClickOnAdapter(){
+    mVideoRecyclerAdapter.SetOnItemClickListener(new VideoRecyclerAdapter.ClickListener() {
+      @Override public void onItemClick(View view, int position) {
+        Intent intent = YouTubeStandalonePlayer.createVideoIntent(VideoActivity.this,
+            BuildConfig.YOUTUBE_API_KEY, listResponses.get(position).getId().getVideoId());
+        startActivity(intent);
+      }
+    });
+  }
+
+  class ReadCacheAsync extends AsyncTask<Void,Void,List<SearchResult>>{
+
+    @Override protected List<SearchResult> doInBackground(Void... voids) {
+      return JsonService.convertToJava(mTinyDB.getString(CACHE));
+    }
+
+    @Override protected void onPostExecute(List<SearchResult> s) {
+      super.onPostExecute(s);
+      if(s.size()>0){
+        mVideoRecyclerAdapter.addAll(s);
+        mProgressBar.setVisibility(View.GONE);
+      }
     }
   }
 }
