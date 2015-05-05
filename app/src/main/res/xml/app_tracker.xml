@@ -15,7 +15,7 @@
   <screenName name="com.yemyatthu.wutthmoneshweyi.ui.AboutActivity">
     About Screen
   </screenName>
-  <screenName name="com.yemyatthu.wutthmoneshweyi.ui.FollowActivity">
+  <screenName name="com.yemyatthu.wutthmoneshweyi.ui.VideoActivity">
     Follow Screen
   </screenName>
   <screenName name="com.yemyatthu.wutthmoneshweyi.ui.MainActivity">

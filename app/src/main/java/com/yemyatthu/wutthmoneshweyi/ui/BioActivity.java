@@ -6,7 +6,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -22,7 +22,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 /**
  * Created by yemyatthu on 4/16/15.
  */
-public class BioActivity extends ActionBarActivity {
+public class BioActivity extends AppCompatActivity {
   @InjectView(R.id.native_name) TextView mNativeName;
   @InjectView(R.id.profile_image) ImageView mProfileImage;
   @InjectView(R.id.wiki_card) CardView mWikiCard;

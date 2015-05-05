@@ -2,11 +2,10 @@ package com.yemyatthu.wutthmoneshweyi.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +24,7 @@ import com.yemyatthu.wutthmoneshweyi.R;
 import com.yemyatthu.wutthmoneshweyi.WHSY;
 import com.yemyatthu.wutthmoneshweyi.adapter.DialogAdapter;
 import com.yemyatthu.wutthmoneshweyi.adapter.PhotoRecyclerAdapter;
+import com.yemyatthu.wutthmoneshweyi.util.NetUtils;
 import com.yemyatthu.wutthmoneshweyi.util.TinyDB;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 /**
  * Created by yemyatthu on 4/15/15.
  */
-public class PhotosActivity extends ActionBarActivity {
+public class PhotosActivity extends AppCompatActivity {
 
   @InjectView(R.id.photo_recycler_view) RecyclerView mPhotoRecyclerView;
   @InjectView(R.id.progress_bar) ProgressBar mProgressBar;
@@ -103,7 +103,7 @@ public class PhotosActivity extends ActionBarActivity {
       mPhotoRecyclerAdapter.setItems(photoUrls);
       mProgressBar.setVisibility(View.GONE);
     }
-    if(!isConnected()){
+    if(!NetUtils.isConnected(this)){
       Toast.makeText(this,"No internet connection.",Toast.LENGTH_LONG).show();
     }
     Firebase.setAndroidContext(this);
@@ -160,11 +160,7 @@ public class PhotosActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
   }
-  public boolean isConnected(){
-    ConnectivityManager connectivityManager =
-        (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-    return (connectivityManager.getActiveNetworkInfo()!=null&&connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting());
-  }
+
 
   private void showDialog() {
     dialog = new Dialog(PhotosActivity.this, R.style.ImageDialogAnimation);

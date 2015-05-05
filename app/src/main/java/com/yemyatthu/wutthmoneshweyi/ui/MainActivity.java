@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.MenuItem;
@@ -23,7 +23,7 @@ import com.yemyatthu.wutthmoneshweyi.WHSY;
 /**
  * Created by yemyatthu on 4/15/15.
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
   @InjectView(R.id.title_text) TextView mTitleText;
   @InjectView(R.id.photo_image) ImageView mPhotoImage;
   @InjectView(R.id.photo_text) TextView mPhotoText;
@@ -65,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
   }
 
   @OnClick(R.id.follow_card) public void onClickFollowCard() {
-    Intent i = new Intent(MainActivity.this, FollowActivity.class);
+    Intent i = new Intent(MainActivity.this, VideoActivity.class);
     startActivity(i);
   }
 

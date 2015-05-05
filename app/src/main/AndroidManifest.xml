@@ -24,7 +24,7 @@
     <activity android:name="com.yemyatthu.wutthmoneshweyi.ui.BioActivity"
         android:label="Biography">
     </activity>
-    <activity android:name="com.yemyatthu.wutthmoneshweyi.ui.FollowActivity"
+    <activity android:name=".ui.VideoActivity"
         android:label="Follow Her">
     </activity>
     <activity android:name=".ui.AboutActivity"

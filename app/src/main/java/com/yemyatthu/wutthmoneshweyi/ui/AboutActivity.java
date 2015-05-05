@@ -2,7 +2,7 @@ package com.yemyatthu.wutthmoneshweyi.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -15,7 +15,7 @@ import com.yemyatthu.wutthmoneshweyi.R;
 /**
  * Created by yemyatthu on 4/16/15.
  */
-public class AboutActivity extends ActionBarActivity{
+public class AboutActivity extends AppCompatActivity{
   @InjectView(R.id.about_text) TextView mAboutText;
   @InjectView(R.id.about_web) WebView mAboutWeb;
   @InjectView(R.id.version_text) TextView mVersionText;
@@ -36,7 +36,7 @@ public class AboutActivity extends ActionBarActivity{
 
     mAboutText.setText(Html.fromHtml(aboutText));
     mAboutWeb.loadUrl("file:///android_asset/about.html");
-    mVersionText.setText("Version: "+ BuildConfig.VERSION_NAME);
+    mVersionText.setText("Version: " + BuildConfig.VERSION_NAME);
   }
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
