@@ -1,6 +1,7 @@
 package com.yemyatthu.wutthmoneshweyi.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.google.android.youtube.player.YouTubeStandalonePlayer;
+import com.google.android.youtube.player.YouTubeIntents;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -198,11 +199,16 @@ public class VideoActivity extends AppCompatActivity {
   private void setOnItemClickOnAdapter(){
     mVideoRecyclerAdapter.SetOnItemClickListener(new VideoRecyclerAdapter.ClickListener() {
       @Override public void onItemClick(View view, int position) {
-        Intent intent = YouTubeStandalonePlayer.createVideoIntent(VideoActivity.this,
-            BuildConfig.YOUTUBE_API_KEY, listResponses.get(position).getId().getVideoId());
-        startActivity(intent);
+        if (YouTubeIntents.isYouTubeInstalled(VideoActivity.this)) {
+          Intent intent = YouTubeIntents.createPlayVideoIntent(VideoActivity.this,
+              listResponses.get(position).getId().getVideoId());
+          startActivity(intent);
+        } else {
+          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v="+listResponses.get(position).getId().getVideoId())));
+        }
       }
     });
+
   }
 
   class ReadCacheAsync extends AsyncTask<Void,Void,List<SearchResult>>{
@@ -215,6 +221,7 @@ public class VideoActivity extends AppCompatActivity {
       super.onPostExecute(s);
       if(s.size()>0){
         mVideoRecyclerAdapter.addAll(s);
+        setOnItemClickOnAdapter();
         mProgressBar.setVisibility(View.GONE);
       }
     }
